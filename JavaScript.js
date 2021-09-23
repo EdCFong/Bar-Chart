@@ -1,4 +1,7 @@
 let data;
+var width = 800,
+    height = 400,
+    barWidth = width / 275;
 
 // Create an XMLHttpRequest object
 const req = new XMLHttpRequest();
@@ -13,6 +16,15 @@ req.open("GET", 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReference
 req.send();
 
 
+
+const dataset = [12, 31, 22, 17, 25, 18, 29, 14, 9];
+
+
+var svgContainer = d3
+    .select('#chartContainer')
+    .append('svg')
+    .attr('width', width + 100)
+    .attr('height', height + 60);
 
 
 // Preparing data **********************************************************************************************************************
@@ -38,22 +50,31 @@ var yearsDate = data.map(function (item) {
 
 var GDP = data.map(function (item) {
     return item[1];
-  });
+});
 
 // ***************************************
-  var scaledGDP = [];
+var scaledGDP = [];
 
-    var gdpMax = d3.max(GDP);
+var gdpMax = d3.max(GDP);
 
-    var linearScale = d3.scaleLinear().domain([0, gdpMax]).range([0, height]);
+var linearScale = d3.scaleLinear().domain([0, gdpMax]).range([0, height]);
 
-    scaledGDP = GDP.map(function (item) {
-      return linearScale(item);
-    });
+scaledGDP = GDP.map(function (item) {
+    return linearScale(item);
+});
 
-    var yAxisScale = d3.scaleLinear().domain([0, gdpMax]).range([height, 0]);
+// Axis **********************************
+var yAxisScale = d3.scaleLinear().domain([0, gdpMax]).range([height, 0]);
+var yAxis = d3.axisLeft(yAxisScale);
 
-    var yAxis = d3.axisLeft(yAxisScale);
+var xMax = new Date(d3.max(yearsDate));
+xMax.setMonth(xMax.getMonth() + 3);
+var xScale = d3
+    .scaleTime()
+    .domain([d3.min(yearsDate), xMax])
+    .range([0, width]);
+
+var xAxis = d3.axisBottom().scale(xScale);
 
 // ****************************************************************************************************************************************
 
@@ -61,14 +82,8 @@ var GDP = data.map(function (item) {
 
 
 
-
-
-
-
-//const dataset = [12, 31, 22, 17, 25, 18, 29, 14, 9];
-
-
-/*svgContainer.selectAll("rect")
+svgContainer.select("svg")
+    .selectAll("rect")
     .data(dataset)
     .enter()
     .append("rect")
@@ -78,7 +93,10 @@ var GDP = data.map(function (item) {
     .attr("width", 25)
     .attr("height", (d, i) => d * 3)
     .attr("fill", "navy");
-*/
+
+
+
+
 
 
 
